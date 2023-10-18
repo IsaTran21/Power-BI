@@ -1,0 +1,70 @@
+******************************************************************************************************************
+To calculate the last day fluctuation compared to the previous day:
+
+PercentageIncrease = 
+VAR MaxDate = MAX(Sheet1[Date])
+VAR LastDayValue =
+    SUMX(FILTER(Sheet1, Sheet1[Date] = MaxDate), Sheet1[VND])
+VAR PreviousDayValue =
+    SUMX(
+        FILTER(Sheet1, Sheet1[Date] = MaxDate - 1), Sheet1[VND]
+    )
+VAR IncreasePercentage =
+    IF(
+        PreviousDayValue <> 0,
+        (LastDayValue - PreviousDayValue) / PreviousDayValue,
+        BLANK()
+    )
+VAR ChangeText =
+    IF(
+        IncreasePercentage > 0,
+        FORMAT(IncreasePercentage, "0.0000%") & " ↑",  // Increase arrow
+        IF(
+            IncreasePercentage < 0,
+            FORMAT(IncreasePercentage, "0.0000%") & " ↓",  // Decrease arrow
+            "No change"
+        )
+    )
+RETURN
+    ChangeText
+******************************************************************************************************************
+To get the latest value, because the dataset is last day is 26/Aug/2022 => if the data is updated to the current day,
+these DAX expressions show the current day.
+LastDayValue = 
+VAR MaxDate = MAX(Sheet1[Date])
+RETURN
+SUMX(FILTER(Sheet1, Sheet1[Date] = MaxDate), Sheet1[VND])
+******************************************************************************************************************
+Current value for the common currencies:
+Because the base currency when calling API is USD, therefore, the general formula when converting into VND:
+currency_abbreviation = Sheet1[VND]/Sheet1[JPY] 
+Euro:
+
+current_euro = 
+VAR MaxDate = MAX(Sheet2[Date])
+RETURN
+SUMX(FILTER(Sheet2, Sheet2[Date] = MaxDate), Sheet2[EUR])
+
+Yen 
+
+current_JPY = 
+VAR MaxDate = MAX(Sheet1[Date])
+RETURN
+SUMX(FILTER(Sheet1, Sheet1[Date] = MaxDate), Sheet1[VND])
+
+GBP
+current_pound = 
+VAR MaxDate = MAX(Sheet2[Date])
+RETURN
+SUMX(FILTER(Sheet2, Sheet2[Date] = MaxDate), Sheet2[GBP])
+
+USD
+current_euro = 
+VAR MaxDate = MAX(Sheet2[Date])
+RETURN
+SUMX(FILTER(Sheet2, Sheet2[Date] = MaxDate), Sheet1[VND])
+
+
+
+
+
